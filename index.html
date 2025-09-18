@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RewiFiction</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Crimson+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar hidden" id="topbar">
+    <div class="left">
+      <button class="btn btn-ghost btn-small" id="btn-back" title="Zurück">Zurück</button>
+      <div class="score" id="score">Punkte: 0</div>
+    </div>
+    <button class="title linklike" id="btn-home" title="Zum Hauptmenü">RewiFiction</button>
+  </header>
+
+  <main>
+    <!-- Start Screen -->
+    <section class="screen screen-start" id="screen-start" aria-label="Startmenü">
+      <h1 class="brand">RewiFiction</h1>
+      <p class="intro">Du bekommst gleich kurze Geschichten und Fanfiction. Deine Aufgabe: Entscheide, ob sie wirklich von Fans im Internet veröffentlicht wurden – oder ob sie neu ausgedacht bzw. mit KI erstellt sind.</p>
+      <button class="btn btn-primary btn-hero" id="btn-start">Start</button>
+    </section>
+
+    <!-- Game Screen -->
+    <section class="screen screen-game hidden" id="screen-game" aria-live="polite">
+      <div class="paper" id="story-card">
+        <div class="paper-inner">
+          <div class="paper-header hidden" id="story-source"></div>
+          <article class="story-text" id="story-text"></article>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" id="btn-real">Reale Fanfiction</button>
+        <button class="btn btn-primary" id="btn-fake">Ausgedacht/KI</button>
+      </div>
+    </section>
+
+    <!-- Result Screen -->
+    <section class="screen screen-result hidden" id="screen-result" aria-label="Ergebnis">
+      <h2>Fertig!</h2>
+      <p id="result-text"></p>
+      <button class="btn" id="btn-restart">Nochmal</button>
+    </section>
+  </main>
+
+  <!-- Result Modal -->
+  <div class="modal hidden" id="result-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-content">
+      <h3 id="modal-title">Ergebnis</h3>
+      <p id="modal-message"></p>
+      <p class="modal-source" id="modal-source"></p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="btn-next">Weiter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SFX -->
+  <audio id="sfx-correct" src="correct-156911.mp3" preload="auto"></audio>
+  <audio id="sfx-wrong" src="wrong-47985.mp3" preload="auto"></audio>
+
+  <script src="app.js"></script>
+</body>
+</html>
