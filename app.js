@@ -245,7 +245,7 @@ function handleAnswer(sel){
   
   // Show result modal immediately
   const modal = qs('#result-modal');
-  const msg = ok ? 'Richtig — es ist echt.' : 'Falsch — es ist ausgedacht.';
+  const msg = ok ? 'Richtig' : 'Falsch';
   qs('#modal-message').textContent = msg;
   if(cur.answer === 'real' && cur.url){
     qs('#modal-source').innerHTML = `Quelle: <a href="${cur.url}" target="_blank" rel="noopener noreferrer">${cur.url}</a>`;
