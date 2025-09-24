@@ -325,21 +325,34 @@ window.addEventListener('DOMContentLoaded', () => {
   // Initialize audio state
   if(bg){
     const prefs = loadAudioPrefs();
+    const desiredMuted = prefs.muted;
     bg.volume = prefs.vol;
-    bg.muted = prefs.muted;
+    bg.muted = desiredMuted;
     if(volSlider){ volSlider.value = String(Math.round(prefs.vol * 100)); }
     applyMuteIcon(bg.muted);
 
     // Attempt autoplay; most browsers block until user gesture
     bg.play().catch(() => {
-      // Fallback: start on first user interaction
+      // Try muted autoplay as a fallback (allowed by most browsers)
+      const wasMuted = bg.muted;
+      bg.muted = true;
+      bg.play().catch(()=>{});
+      // Fallback: ensure real start on first user interaction and restore desired mute state
       const kickstart = () => {
+        // Restore user's preferred mute state
+        bg.muted = desiredMuted;
+        applyMuteIcon(bg.muted);
         bg.play().catch(()=>{});
         window.removeEventListener('pointerdown', kickstart);
         window.removeEventListener('keydown', kickstart);
+        document.removeEventListener('click', kickstart);
       };
       window.addEventListener('pointerdown', kickstart, { once: true });
       window.addEventListener('keydown', kickstart, { once: true });
+      // Also catch regular clicks for safety
+      document.addEventListener('click', kickstart, { once: true });
+      // If we changed muted for autoplay, remember to keep UI consistent
+      if(wasMuted !== true){ applyMuteIcon(true); }
     });
   }
 
@@ -372,7 +385,13 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  qs('#btn-start').addEventListener('click', () => startGame());
+  qs('#btn-start').addEventListener('click', () => {
+    startGame();
+    // Explicitly start bg music on Start click
+    if(bg){
+      bg.play().catch(()=>{});
+    }
+  });
   qs('#btn-restart').addEventListener('click', () => restart());
   qs('#btn-real').addEventListener('click', () => handleAnswer('real'));
   qs('#btn-fake').addEventListener('click', () => handleAnswer('fake'));
