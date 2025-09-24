@@ -291,6 +291,87 @@ function restart(){
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+  // Background music setup
+  const bg = qs('#bg-music');
+  const volSlider = qs('#vol-slider');
+  const btnMute = qs('#btn-mute');
+
+  const LS_KEYS = {
+    vol: 'bgm_volume', // number 0..1
+    muted: 'bgm_muted' // '1' | '0'
+  };
+
+  function applyMuteIcon(muted){
+    if(!btnMute) return;
+    btnMute.textContent = muted ? '🔇' : '🔊';
+    btnMute.setAttribute('aria-label', muted ? 'Stumm' : 'Ton an');
+    btnMute.title = muted ? 'Ton einschalten' : 'Stumm schalten';
+  }
+
+  function loadAudioPrefs(){
+    let vol = parseFloat(localStorage.getItem(LS_KEYS.vol));
+    if(Number.isNaN(vol)) vol = 0.7;
+    let muted = localStorage.getItem(LS_KEYS.muted) === '1';
+    return { vol: Math.min(1, Math.max(0, vol)), muted };
+  }
+
+  function saveAudioPrefs(vol, muted){
+    try{
+      if(typeof vol === 'number') localStorage.setItem(LS_KEYS.vol, String(vol));
+      if(typeof muted === 'boolean') localStorage.setItem(LS_KEYS.muted, muted ? '1' : '0');
+    }catch(_e){}
+  }
+
+  // Initialize audio state
+  if(bg){
+    const prefs = loadAudioPrefs();
+    bg.volume = prefs.vol;
+    bg.muted = prefs.muted;
+    if(volSlider){ volSlider.value = String(Math.round(prefs.vol * 100)); }
+    applyMuteIcon(bg.muted);
+
+    // Attempt autoplay; most browsers block until user gesture
+    bg.play().catch(() => {
+      // Fallback: start on first user interaction
+      const kickstart = () => {
+        bg.play().catch(()=>{});
+        window.removeEventListener('pointerdown', kickstart);
+        window.removeEventListener('keydown', kickstart);
+      };
+      window.addEventListener('pointerdown', kickstart, { once: true });
+      window.addEventListener('keydown', kickstart, { once: true });
+    });
+  }
+
+  // Volume slider events
+  if(volSlider && bg){
+    volSlider.addEventListener('input', (e) => {
+      const v = Math.min(100, Math.max(0, Number(e.target.value)));
+      const vol = v / 100;
+      bg.volume = vol;
+      // Unmute when user adjusts volume above 0
+      if(vol > 0 && bg.muted){ bg.muted = false; }
+      saveAudioPrefs(bg.volume, bg.muted);
+      applyMuteIcon(bg.muted);
+    });
+  }
+
+  // Mute toggle
+  if(btnMute && bg){
+    btnMute.addEventListener('click', () => {
+      bg.muted = !bg.muted;
+      // If unmuting and volume is 0, bump to 0.3
+      if(!bg.muted && bg.volume === 0){
+        bg.volume = 0.3;
+        if(volSlider){ volSlider.value = '30'; }
+      }
+      saveAudioPrefs(bg.volume, bg.muted);
+      applyMuteIcon(bg.muted);
+      // Ensure playback continues after toggle
+      bg.play().catch(()=>{});
+    });
+  }
+
   qs('#btn-start').addEventListener('click', () => startGame());
   qs('#btn-restart').addEventListener('click', () => restart());
   qs('#btn-real').addEventListener('click', () => handleAnswer('real'));
