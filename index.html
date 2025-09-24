@@ -24,12 +24,6 @@
       <h1 class="brand">RewiFiction</h1>
       <p class="intro">Du bekommst gleich kurze Geschichten und Fanfiction. Deine Aufgabe: Entscheide, ob sie wirklich von Fans im Internet veröffentlicht wurden – oder ob sie neu ausgedacht bzw. mit KI erstellt sind.</p>
       <button class="btn btn-primary btn-hero" id="btn-start">Start</button>
-
-      <!-- Volume/Mute control (bottom-right on start page) -->
-      <div class="volume-control" aria-label="Hintergrundmusik Lautstärke">
-        <button class="btn btn-ghost btn-small vol-mute" id="btn-mute" title="Stumm schalten" aria-label="Stumm schalten">🔊</button>
-        <input type="range" id="vol-slider" min="0" max="100" value="70" step="1" aria-label="Lautstärke" />
-      </div>
     </section>
 
     <!-- Game Screen -->
@@ -73,6 +67,12 @@
 
   <!-- Background Music (loops) -->
   <audio id="bg-music" src="bg_music.mp3" preload="auto" loop></audio>
+
+  <!-- Global Volume/Mute control (always visible, top-level) -->
+  <div class="volume-control" aria-label="Hintergrundmusik Lautstärke">
+    <button class="btn btn-ghost btn-small vol-mute" id="btn-mute" title="Stumm schalten" aria-label="Stumm schalten">🔊</button>
+    <input type="range" id="vol-slider" min="0" max="100" value="70" step="1" aria-label="Lautstärke" />
+  </div>
 
   <script src="app.js"></script>
 </body>

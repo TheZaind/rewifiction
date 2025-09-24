@@ -128,7 +128,7 @@ main{flex:1; display:grid; place-items:center; padding:32px; position:relative}
 
 /* Volume control on start screen */
 .volume-control{
-  position: absolute;
+  position: fixed;
   right: 18px;
   bottom: 18px;
   display: flex;
@@ -139,7 +139,7 @@ main{flex:1; display:grid; place-items:center; padding:32px; position:relative}
   background: rgba(13,11,16,.55);
   border: 1px solid rgba(255,255,255,.08);
   box-shadow: 0 6px 20px rgba(0,0,0,.35);
-  z-index: 20;
+  z-index: 2000; /* above modal (1000) */
 }
 .volume-control input[type="range"]{
   width: 140px;

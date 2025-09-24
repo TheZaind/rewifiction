@@ -311,7 +311,9 @@ window.addEventListener('DOMContentLoaded', () => {
   function loadAudioPrefs(){
     let vol = parseFloat(localStorage.getItem(LS_KEYS.vol));
     if(Number.isNaN(vol)) vol = 0.7;
-    let muted = localStorage.getItem(LS_KEYS.muted) === '1';
+    const mutedStr = localStorage.getItem(LS_KEYS.muted);
+    // Default to unmuted when no value stored
+    let muted = mutedStr == null ? false : (mutedStr === '1');
     return { vol: Math.min(1, Math.max(0, vol)), muted };
   }
 
@@ -333,13 +335,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Attempt autoplay; most browsers block until user gesture
     bg.play().catch(() => {
-      // Try muted autoplay as a fallback (allowed by most browsers)
-      const wasMuted = bg.muted;
-      bg.muted = true;
-      bg.play().catch(()=>{});
-      // Fallback: ensure real start on first user interaction and restore desired mute state
+      // If blocked, start on first user interaction without forcing mute
       const kickstart = () => {
-        // Restore user's preferred mute state
         bg.muted = desiredMuted;
         applyMuteIcon(bg.muted);
         bg.play().catch(()=>{});
@@ -349,10 +346,7 @@ window.addEventListener('DOMContentLoaded', () => {
       };
       window.addEventListener('pointerdown', kickstart, { once: true });
       window.addEventListener('keydown', kickstart, { once: true });
-      // Also catch regular clicks for safety
       document.addEventListener('click', kickstart, { once: true });
-      // If we changed muted for autoplay, remember to keep UI consistent
-      if(wasMuted !== true){ applyMuteIcon(true); }
     });
   }
 
